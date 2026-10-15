@@ -1,0 +1,23 @@
+{
+  "FileVersion": 3,
+  "Version": 5,
+  "VersionName": "0.2.3",
+  "FriendlyName": "Grimoire",
+  "Description": "Import Grimoire API data into Unreal assets, link Actors, localize UI and play dialogs offline.",
+  "Category": "Game Data",
+  "CreatedBy": "Grimoire",
+  "CanContainContent": true,
+  "IsBetaVersion": true,
+  "Modules": [
+    {
+      "Name": "GrimoireRuntime",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "GrimoireEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ]
+}
