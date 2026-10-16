@@ -19,5 +19,6 @@
       "Type": "Editor",
       "LoadingPhase": "Default"
     }
-  ]
+  ],
+  "EngineVersion": "5.8.0"
 }

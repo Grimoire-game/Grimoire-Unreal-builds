@@ -19,16 +19,17 @@ modules. It uses the same Public API v1 contract as the supplied Unity plugin.
 5. Open **Window > Grimoire Connect**.
 
 The source has no third-party dependencies. Only engine modules are required.
-Version **0.2.2** targets UE **5.4+**; its Windows editor and game builds are
-validated against UE **5.7.4**. Version 0.1.0 was also built against UE 5.4.2. Other
-engine versions and operating systems require building from source and testing
-in that environment. Prebuilt editor binaries, when supplied, are for the exact
-UE version named on their archive.
+Version **0.2.3** targets UE **5.4+**. Its Windows editor and game builds are
+validated against UE **5.4.2**, **5.5.4**, **5.6.1**, **5.7.4**, and **5.8.3**.
+Other engine versions and operating systems require building from source and
+testing in that environment. Prebuilt editor binaries are for the exact UE
+version named on their archive.
 
-The **UE5.7.4-Win64-Editor** archive additionally includes the tested Windows
-editor DLLs, so a matching editor can load it without compiling first. Building
-or packaging a game still requires a supported C++ toolchain; this is not a
-precompiled shipping-game distribution.
+Each **UE<version>-Win64-Editor** archive includes the source and matching Windows
+editor DLLs, so that editor can load it without compiling first. Building or
+packaging a game still requires a supported C++ toolchain; these are not
+precompiled shipping-game distributions. The **Source** archive contains no
+engine-specific binaries.
 
 ## Connect and import
 
@@ -367,7 +368,7 @@ automation tests. It includes a validation-only compatibility header for this
 machine's MSVC 14.51 with UE 5.4; the distributable plugin does not change engine
 headers or require that header on supported toolchains.
 
-The 15 automation tests cover the API envelope, authentication/2FA/refresh/cancellation, a
+The 16 automation tests cover the API envelope, authentication/2FA/refresh/cancellation, a
 101-object paginated import, failed-refresh preservation, draft and engine
 commit payloads, typed fields, references, localization fallback, legacy
 dialogs, choices, conditions, setters and automatic-loop protection. They also
@@ -376,6 +377,23 @@ node/choice metadata, shared values across dialog players, runtime Object Link
 reads, localized inline values, and missing requirements across linked cycles.
 Interaction tests cover target identity, rejecting the controlled pawn, nearby
 dialog startup, preventing restarts during a conversation, and movement unlock.
+The dialog designer test creates and compiles the dialog and choice Widget
+Blueprints, including widget GUID registration on UE 5.6 and newer.
+
+To rebuild all five Windows editor distributions, run from the workspace root:
+
+```powershell
+pwsh -File .\UnrealValidation\BuildMatrix.ps1
+```
+
+To build only UE 5.8, append `-EngineVersions 5.8`.
+
+The script uses engines under `C:\Program Files\Epic Games` by default (override
+with `-EngineBase`). Each engine gets a separate host under
+`UnrealValidation/Matrix/`. It builds editor and game targets, runs the automation
+suite, writes ZIPs into `Dist/`, then runs the suite again from the extracted ZIP
+in a fresh Blueprint-only project. Packaging checks engine BuildIds and source
+and DLL hashes against the successful validation record.
 
 Native integration follows Epic's [plugin module](https://dev.epicgames.com/documentation/en-us/unreal-engine/plugins-in-unreal-engine)
 and [Data Asset](https://dev.epicgames.com/documentation/en-us/unreal-engine/data-assets-in-unreal-engine) patterns.

@@ -95,7 +95,7 @@ FGrimoireDialogNodeData UGrimoireDatabase::ParseNodeData(const FString& Dialog, 
         Option.VisibilityConditionJson = Write(Object(O, TEXT("visibilityCondition"))); Option.VariableActionJson = Write(Object(O, TEXT("variableAction")));
         Option.RawJson = Write(O); Out.Options.Add(MoveTemp(Option));
     }
-    for (const auto& Field : N->Values) Out.JsonFields.Add(Field.Key, WriteValue(Field.Value));
+    for (const auto& Field : N->Values) Out.JsonFields.Add(FString(Field.Key), WriteValue(Field.Value));
     Out.RawJson = Write(N); return Out;
 }
 TArray<FGrimoireDialogNodeData> UGrimoireDatabase::GetDialogNodes(const FString& Key) const

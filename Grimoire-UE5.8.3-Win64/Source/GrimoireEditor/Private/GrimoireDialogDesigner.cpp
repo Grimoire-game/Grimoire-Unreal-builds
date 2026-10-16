@@ -20,6 +20,7 @@
 #include "Components/OverlaySlot.h"
 #include "Components/ButtonSlot.h"
 #include "ScopedTransaction.h"
+#include "Misc/EngineVersionComparison.h"
 
 FString UGrimoireEditorSubsystem::ConfigureDialogDesigner(UBlueprint* DialogBlueprint, UBlueprint* ChoiceBlueprint)
 {
@@ -99,11 +100,15 @@ FString UGrimoireEditorSubsystem::ConfigureDialogDesigner(UBlueprint* DialogBlue
         auto* Slot = Cast<UButtonSlot>(Button->AddChild(Label)); Slot->SetPadding(FMargin(14, 8)); Slot->SetHorizontalAlignment(HAlign_Left);
     }
     if (!Cast<UButton>(ChoiceBP->WidgetTree->FindWidget(TEXT("ChoiceButton"))) || !Cast<UTextBlock>(ChoiceBP->WidgetTree->FindWidget(TEXT("ChoiceLabel")))) return TEXT("Choice widget requires ChoiceButton and ChoiceLabel.");
+    // Widget GUID tracking was introduced in UE 5.6; earlier engines compile
+    // widget variables directly from the tree without this registration step.
+#if !UE_VERSION_OLDER_THAN(5, 6, 0)
     for (auto* WidgetBP : {BP, ChoiceBP})
     {
         TArray<UWidget*> All; WidgetBP->WidgetTree->GetAllWidgets(All);
         for (auto* W : All) if (!WidgetBP->WidgetVariableNameToGuidMap.Contains(W->GetFName())) WidgetBP->OnVariableAdded(W->GetFName());
     }
+#endif
     FBlueprintEditorUtils::RefreshAllNodes(ChoiceBP); FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(ChoiceBP); FKismetEditorUtilities::CompileBlueprint(ChoiceBP);
     FBlueprintEditorUtils::RefreshAllNodes(BP); FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP); FKismetEditorUtilities::CompileBlueprint(BP);
     if (BP->Status == BS_Error || ChoiceBP->Status == BS_Error) return TEXT("Widget Blueprint compilation failed; inspect the compiler results.");
