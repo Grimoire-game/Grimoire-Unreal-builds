@@ -1,0 +1,7 @@
+{
+  "Modules": {
+    "GrimoireRuntime": "UnrealEditor-GrimoireRuntime.dll",
+    "GrimoireEditor": "UnrealEditor-GrimoireEditor.dll"
+  },
+  "BuildId": "37670630"
+}
